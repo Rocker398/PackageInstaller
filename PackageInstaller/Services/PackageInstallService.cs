@@ -19,75 +19,57 @@ namespace PackageInstaller.Services
         {
             PackageInstallResponse response = new PackageInstallResponse();
 
-            // Parse packages to a list of PackageInfo objects
-            List<PackageInfo> packageInfoList = GetPackageInfoList(packages);
-            
-            List<PackageInfo> installedPackages = new List<PackageInfo>();
-
-            // Get and install the packages with no dependencies first
-            List<PackageInfo> packagesWithNoDependencies = packageInfoList.Where(x => x.Dependency == string.Empty).ToList();
-
-            // Filter the packages to exclude the ones with no dependencies
-            packageInfoList = packageInfoList.Where(x => x.Dependency != string.Empty).ToList();
-            
-            /*
-             * While packagesWithNoDependencies is non-empty
-             * {
-             *      remove package from packagesWithNoDependencies
-             *      add package to installedPackages
-             *      
-             *      for each pkg with a dependency on the current package
-             *      {
-             *          remove pkg from packageInfoList
-             *          if pkg has no other dependencies
-             *          {
-             *              add pkg to packagesWithNoDependencies
-             *          }
-             *      }
-             * }
-             * 
-             * If packageInfoList has packages
-             * {
-             *      the graph has cycles
-             * }
-             * else
-             * {
-             *      return installedPackages
-             * }
-             */
-             
-            // Topographical sort
-            while (packagesWithNoDependencies.Count > 0)
+            try
             {
-                PackageInfo currPackage = packagesWithNoDependencies.First();
-                packagesWithNoDependencies.Remove(currPackage);
-                installedPackages.Add(currPackage);
+                // Parse packages to a list of PackageInfo objects
+                List<PackageInfo> packageInfoList = GetPackageInfoList(packages);
 
-                List<PackageInfo> packagesWithCurrentDependency = packageInfoList.Where(x => x.Dependency == currPackage.Name).ToList();
-                foreach (PackageInfo package in packagesWithCurrentDependency)
+                List<PackageInfo> installedPackages = new List<PackageInfo>();
+
+                // Get and install the packages with no dependencies first
+                List<PackageInfo> installQueue = packageInfoList.Where(x => x.Dependency == string.Empty).ToList();
+
+                // Filter the packages to exclude the ones with no dependencies
+                packageInfoList = packageInfoList.Where(x => x.Dependency != string.Empty).ToList();
+
+                // Perform a topological sort, while the install queue is not empty
+                while (installQueue.Count > 0)
                 {
-                    packageInfoList.Remove(package);
+                    // Remove the first package from the install queue, and install the package
+                    PackageInfo currPackage = installQueue.First();
+                    installQueue.Remove(currPackage);
+                    installedPackages.Add(currPackage);
 
-                    List<PackageInfo> packagesWithDependency = packageInfoList.Where(x => x.Name == package.Dependency).ToList();
-                    //List<PackageInfo> packagesWithDependency = packageInfoList.Where(x => x.Dependency == package.Name).ToList();
-
-                    if (packagesWithDependency.Count == 0)
+                    // Find all packages that have a dependency on the current package and add them to the install queue
+                    List<PackageInfo> packagesWithCurrentDependency = packageInfoList.Where(x => x.Dependency == currPackage.Name).ToList();
+                    foreach (PackageInfo package in packagesWithCurrentDependency)
                     {
-                        packagesWithNoDependencies.Add(package);
+                        // We are handling the package, so remove it from the original "graph" i.e. packageInfoList
+                        packageInfoList.Remove(package);
+
+                        // Because packages only have one dependency, we know the current package dependencies are already installed, so just add this to the install queue
+                        installQueue.Add(package);
                     }
                 }
-            }
 
-            if (packageInfoList.Count > 0)
-            {
-                response.Status = PackageInstallStatuses.CONTAINS_CYCLE;
-            }
-            else
-            {
-                string installedPackagesFormatted = GetInstalledPackagesFormatted(installedPackages);
+                // If there are still items in the original list, the package dependencies contain a cycle
+                if (packageInfoList.Count > 0)
+                {
+                    response.Status = PackageInstallStatuses.CONTAINS_CYCLE;
+                }
+                else
+                {
+                    // The package dependencies did not contain a cycle, get the formatted string of the install order
+                    string installedPackagesFormatted = GetInstalledPackagesFormatted(installedPackages);
 
-                response.Status = PackageInstallStatuses.SUCCESS;
-                response.InstalledPackages = installedPackagesFormatted;
+                    response.Status = PackageInstallStatuses.SUCCESS;
+                    response.InstalledPackages = installedPackagesFormatted;
+                }
+            }
+            catch
+            {
+                // If given incorrectly formatted input, we will break here and just return an error status
+                response.Status = PackageInstallStatuses.ERROR;
             }
 
             return response;
@@ -128,12 +110,21 @@ namespace PackageInstaller.Services
             return packageInfoList;
         }
 
+        /// <summary>
+        /// Given a list of packages in the order to be installed, returns a comma separated string of packages
+        /// </summary>
+        /// <param name="packages">A list of Packages in the order to be installed</param>
+        /// <returns>A comma separated string of package names in the order of install, such that a package's dependency will always precede that package</returns>
         private static string GetInstalledPackagesFormatted(List<PackageInfo> packages)
         {
             string installedPackages = string.Empty;
 
             List<string> packageNames = packages.Select(x => x.Name).ToList();
-            installedPackages = string.Join(", ", packageNames);
+
+            if (packageNames.Count > 0)
+            {
+                installedPackages = string.Join(", ", packageNames);
+            }
 
             return installedPackages;
         }

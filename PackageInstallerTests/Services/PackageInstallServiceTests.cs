@@ -22,11 +22,11 @@ namespace PackageInstallerTests.Services
             PackageInstallResponse response = PackageInstallService.InstallPackages(input);
 
             // The response should never be null
-            Assert.AreNotEqual(response, null);
+            Assert.AreNotEqual(null, response);
 
             // The response should be successful with this result
-            Assert.AreEqual(response.Status, PackageInstallStatuses.SUCCESS);
-            Assert.AreEqual(response.InstalledPackages, "CamelCaser, KittenService");
+            Assert.AreEqual(PackageInstallStatuses.SUCCESS, response.Status);
+            Assert.AreEqual("CamelCaser, KittenService", response.InstalledPackages);
         }
 
         [TestMethod]
@@ -45,11 +45,34 @@ namespace PackageInstallerTests.Services
             PackageInstallResponse response = PackageInstallService.InstallPackages(input);
 
             // The response should never be null
-            Assert.AreNotEqual(response, null);
+            Assert.AreNotEqual(null, response);
 
             // The response should be successful with this result
-            Assert.AreEqual(response.Status, PackageInstallStatuses.SUCCESS);
-            Assert.AreEqual(response.InstalledPackages, "KittenService, Ice, CamelCaser, Cyberportal, Leetmeme, Fraudstream");
+            Assert.AreEqual(PackageInstallStatuses.SUCCESS, response.Status);
+            Assert.AreEqual("KittenService, Ice, CamelCaser, Cyberportal, Leetmeme, Fraudstream", response.InstalledPackages);
+        }
+
+        [TestMethod]
+        public void TestInstallPackagesValid_Hard()
+        {
+            string[] input = new string[]
+            {
+                "Texture: Cabbage",
+                "Bread: Amusement",
+                "Cabbage: Giraffe",
+                "Amusement: Giraffe",
+                "Giraffe: Flower",
+                "Flower: "
+            };
+
+            PackageInstallResponse response = PackageInstallService.InstallPackages(input);
+
+            // The response should never be null
+            Assert.AreNotEqual(null, response);
+
+            // The response should be successful with this result
+            Assert.AreEqual(PackageInstallStatuses.SUCCESS, response.Status);
+            Assert.AreEqual("Flower, Giraffe, Cabbage, Amusement, Texture, Bread", response.InstalledPackages);
         }
 
         [TestMethod]
@@ -68,11 +91,11 @@ namespace PackageInstallerTests.Services
             PackageInstallResponse response = PackageInstallService.InstallPackages(input);
 
             // The response should never be null
-            Assert.AreNotEqual(response, null);
+            Assert.AreNotEqual(null, response);
 
             // This should report that it contains a cycle and no packages should be installed
-            Assert.AreEqual(response.Status, PackageInstallStatuses.CONTAINS_CYCLE);
-            Assert.AreEqual(response.InstalledPackages, string.Empty);
+            Assert.AreEqual(PackageInstallStatuses.CONTAINS_CYCLE, response.Status);
+            Assert.AreEqual(string.Empty, response.InstalledPackages);
         }
 
         [TestMethod]
@@ -93,16 +116,48 @@ namespace PackageInstallerTests.Services
             List<PackageInfo> packageInfoList = (List<PackageInfo>)privateType.InvokeStatic("GetPackageInfoList", args);
 
             // We should get a result
-            Assert.AreNotEqual(packageInfoList, null);
-            Assert.AreNotEqual(packageInfoList.Count, 0);
+            Assert.AreNotEqual(null, packageInfoList);
+            Assert.AreNotEqual(0, packageInfoList.Count);
             
             // Compare the first package
-            Assert.AreEqual(packageInfoList[0].Name, "KittenService");
-            Assert.AreEqual(packageInfoList[0].Dependency, "CamelCaser");
+            Assert.AreEqual("KittenService", packageInfoList[0].Name);
+            Assert.AreEqual("CamelCaser", packageInfoList[0].Dependency);
 
             // Compare the second package
-            Assert.AreEqual(packageInfoList[1].Name, "CamelCaser");
-            Assert.AreEqual(packageInfoList[1].Dependency, string.Empty);
+            Assert.AreEqual("CamelCaser", packageInfoList[1].Name);
+            Assert.AreEqual(string.Empty, packageInfoList[1].Dependency);
+        }
+
+        [TestMethod]
+        public void TestGetInstalledPackagesFormatted()
+        {
+            PackageInstallService service = new PackageInstallService();
+
+            PrivateType privateType = new PrivateType(service.GetType());
+
+            string[] input = new string[]
+            {
+                "Texture: Cabbage",
+                "Bread: Amusement",
+                "Cabbage: Giraffe",
+                "Amusement: Giraffe",
+                "Giraffe: Flower",
+                "Flower: "
+            };
+
+            object[] args = new object[1] { input };
+
+            List<PackageInfo> packageInfoList = (List<PackageInfo>)privateType.InvokeStatic("GetPackageInfoList", args);
+
+            object[] new_args = new object[1] { packageInfoList };
+
+            string installedPackagesFormatted = (string)privateType.InvokeStatic("GetInstalledPackagesFormatted", new_args);
+
+            // We should get a result
+            Assert.AreNotEqual(string.Empty, installedPackagesFormatted);
+
+            // We should get the following formatted order (will just be the order of the given list because we aren't testing the topological sort here
+            Assert.AreEqual("Texture, Bread, Cabbage, Amusement, Giraffe, Flower", installedPackagesFormatted);
         }
     }
 }

@@ -76,6 +76,25 @@ namespace PackageInstallerTests.Services
         }
 
         [TestMethod]
+        public void TestInstallPackagesInvalid_Easy()
+        {
+            string[] input = new string[]
+            {
+                "KittenService: ",
+                "Leetmeme: Cyberportal",
+            };
+
+            PackageInstallResponse response = PackageInstallService.InstallPackages(input);
+
+            // The response should never be null
+            Assert.AreNotEqual(null, response);
+
+            // This should report that it contains a package with a dependency on a missing package and no packages should be installed
+            Assert.AreEqual(PackageInstallStatuses.CONTAINS_CYCLE, response.Status);
+            Assert.AreEqual(string.Empty, response.InstalledPackages);
+        }
+
+        [TestMethod]
         public void TestInstallPackagesInvalid_Medium()
         {
             string[] input = new string[]

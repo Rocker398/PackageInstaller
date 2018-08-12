@@ -52,7 +52,7 @@ namespace PackageInstaller.Services
                     }
                 }
 
-                // If there are still items in the original list, the package dependencies contain a cycle
+                // If there are still items in the original list, the package dependencies contain a cycle or a dependency on a missing package
                 if (packageInfoList.Count > 0)
                 {
                     response.Status = PackageInstallStatuses.CONTAINS_CYCLE;

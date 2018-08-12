@@ -60,7 +60,7 @@ namespace PackageInstaller
 
                 case PackageInstallStatuses.CONTAINS_CYCLE:
                     {
-                        message = "No Packages were installed, invalid dependency specification that contains cycles.";
+                        message = "No Packages were installed, invalid dependency specification that contains cycles or a dependency on a missing package.";
                         break;
                     }
 

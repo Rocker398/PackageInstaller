@@ -13,7 +13,7 @@ namespace PackageInstallerTests.Services
         [TestMethod]
         public void TestInstallPackagesValid_Easy()
         {
-            List<string> input = new List<string>()
+            string[] input = new string[] 
             {
                 "KittenService: CamelCaser",
                 "CamelCaser: "
@@ -32,7 +32,7 @@ namespace PackageInstallerTests.Services
         [TestMethod]
         public void TestInstallPackagesValid_Medium()
         {
-            List<string> input = new List<string>()
+            string[] input = new string[]
             {
                 "KittenService: ",
                 "Leetmeme: Cyberportal",
@@ -55,7 +55,7 @@ namespace PackageInstallerTests.Services
         [TestMethod]
         public void TestInstallPackagesInvalid_Medium()
         {
-            List<string> input = new List<string>()
+            string[] input = new string[]
             {
                 "KittenService: ",
                 "Leetmeme: Cyberportal",
@@ -70,8 +70,9 @@ namespace PackageInstallerTests.Services
             // The response should never be null
             Assert.AreNotEqual(response, null);
 
-            // The response should be successful with this result
+            // This should report that it contains a cycle and no packages should be installed
             Assert.AreEqual(response.Status, PackageInstallStatuses.CONTAINS_CYCLE);
+            Assert.AreEqual(response.InstalledPackages, string.Empty);
         }
     }
 }

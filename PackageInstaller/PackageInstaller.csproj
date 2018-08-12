@@ -43,6 +43,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Enums\PackageInstallStatuses.cs" />
+    <Compile Include="Objects\PackageInfo.cs" />
     <Compile Include="Objects\PackageInstallResponse.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

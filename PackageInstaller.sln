@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.27703.2047
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PackageInstaller", "PackageInstaller\PackageInstaller.csproj", "{7F65A8E3-CC05-4DE0-BC9C-DF36D0E91F95}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PackageInstallerTests", "PackageInstallerTests\PackageInstallerTests.csproj", "{EAA48C4D-ABF5-41B7-A7D8-23F1FBD73B73}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{7F65A8E3-CC05-4DE0-BC9C-DF36D0E91F95}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7F65A8E3-CC05-4DE0-BC9C-DF36D0E91F95}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7F65A8E3-CC05-4DE0-BC9C-DF36D0E91F95}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EAA48C4D-ABF5-41B7-A7D8-23F1FBD73B73}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EAA48C4D-ABF5-41B7-A7D8-23F1FBD73B73}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EAA48C4D-ABF5-41B7-A7D8-23F1FBD73B73}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EAA48C4D-ABF5-41B7-A7D8-23F1FBD73B73}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

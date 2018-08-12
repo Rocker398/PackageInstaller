@@ -74,5 +74,35 @@ namespace PackageInstallerTests.Services
             Assert.AreEqual(response.Status, PackageInstallStatuses.CONTAINS_CYCLE);
             Assert.AreEqual(response.InstalledPackages, string.Empty);
         }
+
+        [TestMethod]
+        public void TestGetPackageInfoList()
+        {
+            PackageInstallService service = new PackageInstallService();
+
+            PrivateType privateType = new PrivateType(service.GetType());
+
+            string[] input = new string[]
+            {
+                "KittenService: CamelCaser",
+                "CamelCaser: "
+            };
+
+            object[] args = new object[1] { input };
+
+            List<PackageInfo> packageInfoList = (List<PackageInfo>)privateType.InvokeStatic("GetPackageInfoList", args);
+
+            // We should get a result
+            Assert.AreNotEqual(packageInfoList, null);
+            Assert.AreNotEqual(packageInfoList.Count, 0);
+            
+            // Compare the first package
+            Assert.AreEqual(packageInfoList[0].Name, "KittenService");
+            Assert.AreEqual(packageInfoList[0].Dependency, "CamelCaser");
+
+            // Compare the second package
+            Assert.AreEqual(packageInfoList[1].Name, "CamelCaser");
+            Assert.AreEqual(packageInfoList[1].Dependency, string.Empty);
+        }
     }
 }

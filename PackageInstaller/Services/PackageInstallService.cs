@@ -128,5 +128,18 @@ namespace PackageInstaller.Services
 
             return installedPackages;
         }
+
+        public static string[] GetCleanedPackageListFromInput(string input)
+        {
+            string[] packages;
+
+            // Clean up input
+            input = input.Replace("[", string.Empty).Replace("]", string.Empty).Trim();
+
+            // If the string is formatted correctly, we can just split the input by commas and trim any extra white space and quotes if given
+            packages = input.Split(',').Select(x => x.Trim().Replace("\"", string.Empty)).ToArray();
+
+            return packages;
+        }
     }
 }

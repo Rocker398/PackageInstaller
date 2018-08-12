@@ -159,5 +159,21 @@ namespace PackageInstallerTests.Services
             // We should get the following formatted order (will just be the order of the given list because we aren't testing the topological sort here
             Assert.AreEqual("Texture, Bread, Cabbage, Amusement, Giraffe, Flower", installedPackagesFormatted);
         }
+
+        [TestMethod]
+        public void TestGetCleanedPackageListFromInput_Easy()
+        {
+            string input = "[ \"KittenService: CamelCaser\", \"CamelCaser: \" ]";
+
+            string[] packages = PackageInstallService.GetCleanedPackageListFromInput(input);
+
+            // We should get a result
+            Assert.AreNotEqual(null, packages);
+            Assert.AreNotEqual(0, packages.Length);
+
+            // We should get the following list
+            Assert.AreEqual("KittenService: CamelCaser", packages[0]);
+            Assert.AreEqual("CamelCaser: ", packages[1]);
+        }
     }
 }

@@ -49,7 +49,7 @@ namespace PackageInstallerTests.Services
 
             // The response should be successful with this result
             Assert.AreEqual(response.Status, PackageInstallStatuses.SUCCESS);
-            Assert.AreEqual(response.InstalledPackages, "KittenService, Ice, Cyberportal, Leetmeme, CamelCaser, Fraudstream");
+            Assert.AreEqual(response.InstalledPackages, "KittenService, Ice, CamelCaser, Cyberportal, Leetmeme, Fraudstream");
         }
 
         [TestMethod]

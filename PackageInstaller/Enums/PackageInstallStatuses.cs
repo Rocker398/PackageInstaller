@@ -10,6 +10,7 @@ namespace PackageInstaller.Enums
     {
         DEFAULT_NOT_SET = 0,
         SUCCESS = 1,
-        CONTAINS_CYCLE = 2
+        CONTAINS_CYCLE = 2,
+        ERROR = 3
     }
 }

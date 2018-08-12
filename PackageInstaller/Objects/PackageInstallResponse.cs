@@ -18,7 +18,7 @@ namespace PackageInstaller.Objects
         public PackageInstallStatuses Status { get; set; }
 
         /// <summary>
-        /// If install successful, contains the comma separated list of packages and the order they were installed
+        /// If install successful, contains a comma separated string of package names in the order of install, such that a package's dependency will always precede that package
         /// </summary>
         public string InstalledPackages { get; set; }
 
